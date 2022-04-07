@@ -1,0 +1,25 @@
+services:
+  react-tailwind-ts:
+    container_name: react-tailwind-ts
+    build:
+      context: ./react-tailwind-ts
+    ports:
+      - 3001:3001
+    volumes:
+      - ./react-tailwind-ts:/app
+      - exclude:/app/node_modules
+    env_file:
+      - ./react-tailwind-ts/.env
+  react-mui-js:
+    container_name: react-mui-js
+    build:
+      context: ./react-mui-js
+    ports:
+      - 3002:3002
+    volumes:
+      - ./react-mui-js:/app
+      - exclude:/app/node_modules
+    env_file:
+      - ./react-mui-js/.env
+volumes:
+  exclude:
