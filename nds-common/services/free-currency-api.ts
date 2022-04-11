@@ -9,7 +9,7 @@ import Axios, { AxiosResponse } from 'axios';
  * @param to An ISO 4217 currency code
  * @returns A formatted url
  */
-const createUrl = (date: Date, format: Formats, from?: CurrencyCode, to?: CurrencyCode): string => {
+export const createUrl = (date: Date, format: Formats, from?: CurrencyCode, to?: CurrencyCode): string => {
   const formattedFrom = from ? `/${from}` : '';
   const formattedTo = to ? `/${to}` : '';
   return `https://cdn.jsdelivr.net/gh/fawazahmed0/currency-api@1/${date}/currencies${formattedFrom}${formattedTo}${format}`
