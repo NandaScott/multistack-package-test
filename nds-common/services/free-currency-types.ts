@@ -6,7 +6,7 @@ type DD = `0${oneToNine}` | `${1 | 2}${d}` | `3${0 | 1}`;
 
 export type Date = `${YYYY}-${MM}-${DD}` | 'latest';
 
-export type Formats = '.js' | '.min.js';
+export type Formats = '.json' | '.min.json';
 
 export type AdditionalDate = {
   date: Date

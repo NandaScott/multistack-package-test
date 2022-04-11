@@ -34,7 +34,7 @@ export function getExchangeRate<T extends CurrencyCode>(date: Date, curr: T): Pr
  */
 export function getExchangeRate<T extends CurrencyCode>(date: Date, from: CurrencyCode, to: T): Promise<AxiosResponse<FromToResp<T>>>;
 export async function getExchangeRate(date: Date, from?: CurrencyCode, to?: CurrencyCode): Promise<AxiosResponse<{}>> {
-  const url = createUrl(date, '.min.js', from, to)
+  const url = createUrl(date, '.min.json', from, to)
 
   return Axios.get(url)
     .catch((e) => {
