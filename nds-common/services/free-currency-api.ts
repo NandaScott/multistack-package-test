@@ -10,8 +10,9 @@ import Axios, { AxiosResponse } from 'axios';
  * @returns A formatted url
  */
 const createUrl = (date: Date, format: Formats, from?: CurrencyCode, to?: CurrencyCode): string => {
-  const args = `${from ?? '/' + from}${to ?? '/' + to}`
-  return `https://cdn.jsdelivr.net/gh/fawazahmed0/currency-api@1/${date}/currencies${args}${format}`
+  const formattedFrom = from ? `/${from}` : '';
+  const formattedTo = to ? `/${to}` : '';
+  return `https://cdn.jsdelivr.net/gh/fawazahmed0/currency-api@1/${date}/currencies${formattedFrom}${formattedTo}${format}`
 };
 
 /**

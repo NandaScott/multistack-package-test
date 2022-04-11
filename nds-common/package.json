@@ -1,6 +1,6 @@
 {
   "name": "nds-common",
-  "version": "0.4.0",
+  "version": "0.4.1",
   "description": "Testing to see how a multistack package works",
   "main": "./build/index.js",
   "types": "./build/index.d.js",
