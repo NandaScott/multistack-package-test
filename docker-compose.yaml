@@ -7,7 +7,7 @@ services:
       - 3001:3001
     volumes:
       - ./react-tailwind-ts:/app
-      - exclude:/app/node_modules
+      - react-tailwind-ts-node_modules:/app/node_modules
     env_file:
       - ./react-tailwind-ts/.env
   react-mui-js:
@@ -18,8 +18,9 @@ services:
       - 3002:3002
     volumes:
       - ./react-mui-js:/app
-      - exclude:/app/node_modules
+      - react-mui-js-node_modules:/app/node_modules
     env_file:
       - ./react-mui-js/.env
 volumes:
-  exclude:
+  react-tailwind-ts-node_modules:
+  react-mui-js-node_modules:
