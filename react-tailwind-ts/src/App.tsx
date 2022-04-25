@@ -1,178 +1,217 @@
-import React, { useCallback, useMemo, useRef, useState } from 'react';
-import { Combobox } from '@headlessui/react';
-import { currencyList, CurrencyCode, getExchangeRate } from 'nds-common';
-import clsx from 'clsx';
-
-interface CurrencyOption {
-  code: string;
-  label: string;
-}
+import FormPage from './components/form-page';
+import { useMIP } from './hooks/useMIP';
 
 export default function App() {
-  const [from, setFrom] = useState<CurrencyCode | undefined>();
-  const [to, setTo] = useState<CurrencyCode | undefined>();
-  const [exchangeRate, setExchangeRate] = useState<any>();
-  const currencies = useRef<CurrencyOption[]>(
-    Object.entries(currencyList).map(([k, v]) => ({ code: k, label: v }))
-  );
-
-  const onSubmit = useCallback(
-    (e) => {
-      e.preventDefault();
-      if (!from || !to) return;
-      getExchangeRate('latest', from, to)
-        .then((resp) => setExchangeRate(resp.data))
-        .catch(console.error);
-    },
-    [from, to]
-  );
+  const {
+    currentPage,
+    submitForm,
+    register,
+    handleSubmit,
+    isLastPage,
+    isFirstPage,
+    nextPage,
+    previousPage,
+    getValues,
+  } = useMIP({
+    pageIds: ['address', 'ccinfo', 'upsell', 'confirmation'],
+    onNext: () => console.log('nexted'),
+    onSubmit: () => console.log('submitted'),
+  });
 
   return (
-    <div className='bg-slate-500 h-full flex items-center justify-center flex-col gap-4 space-y-8'>
-      <h1 className='text-white font-sans font-bold text-6xl'>
-        Exchange Rate - o - matic
-      </h1>
+    <div className='flex justify-center items-center bg-gray-200 h-full py-40'>
       <form
-        onSubmit={onSubmit}
-        className='flex bg-slate-200 gap-4 p-4 rounded-md shadow-md items-center'
+        onSubmit={handleSubmit(submitForm)}
+        className='flex gap-4 flex-col items-end'
       >
-        <CurrencySelector onChange={setFrom} options={currencies.current} />
-        <RightArrow />
-        <CurrencySelector onChange={setTo} options={currencies.current} />
-        <button
-          type='submit'
-          className='p-[1em] h-full w-[8em] bg-blue-500 rounded-md text-white font-sans font-semibold text-md'
+        <FormPage
+          currentPage={currentPage}
+          pageId='address'
+          className='bg-white p-8 rounded shadow-md grid grid-cols-2 grid-flow-row gap-y-4'
         >
-          Submit
-        </button>
-      </form>
-      <Display exchangeRate={exchangeRate} from={from} to={to} />
-    </div>
-  );
-}
-
-interface CurrencySelectorProps<T extends string> {
-  onChange: React.Dispatch<React.SetStateAction<CurrencyCode | undefined>>;
-  options: Record<T, string>[];
-}
-
-const CurrencySelector = (props: CurrencySelectorProps<'code' | 'label'>) => {
-  const { onChange, options } = props;
-  const [query, setQuery] = useState('');
-  const [selected, setSelected] = useState('');
-
-  const filteredOptions = useMemo(() => {
-    if (query === '') return options;
-
-    return options.filter((op) =>
-      op.label.toLowerCase().includes(query.toLowerCase())
-    );
-  }, [options, query]);
-
-  const handleInput = useCallback((e) => setQuery(e.target.value), []);
-
-  const handleChange = useCallback(
-    (e: CurrencyCode) => {
-      setSelected(currencyList[e]);
-      onChange(e);
-    },
-    [onChange]
-  );
-
-  return (
-    <Combobox
-      as='div'
-      className='relative space-y-1 w-80'
-      value={selected}
-      onChange={handleChange}
-    >
-      <div>
-        <Combobox.Input
-          onChange={handleInput}
-          className='w-full rounded-md pl-4 border-0 focus:outline-none focus:ring-0 text-md text-gray-800 placeholder:text-gray-400 h-16'
-          placeholder='Search currencies...'
-        />
-        <Combobox.Button className='absolute inset-y-0 right-0 flex items-center pr-4'>
-          <SelectorIcon className='w-5 h-5 text-gray-400' aria-hidden='true' />
-        </Combobox.Button>
-      </div>
-      <Combobox.Options className='w-full shadow-md space-y-2 no-scrollbar absolute overflow-y-scroll max-h-60 bg-white rounded-md'>
-        {filteredOptions.length === 0 && query !== '' ? (
-          <div className='cursor-default select-none relative py-2 px-4 text-gray-700'>
-            Nothing found.
+          <div className='col-span-2 grid gap-4 grid-cols-2 grid-flow-row'>
+            <p className='text-gray-400 col-span-2 text-lg font-semibold'>
+              Contact Info
+            </p>
+            <input
+              type='text'
+              placeholder='First Name'
+              {...register('address.firstName')}
+            />
+            <input
+              type='text'
+              placeholder='Last Name'
+              {...register('address.lastName')}
+            />
+            <input
+              type='text'
+              placeholder='Email'
+              {...register('address.email')}
+              className='col-span-2'
+            />
           </div>
-        ) : (
-          filteredOptions.map((op) => (
-            <Combobox.Option as={React.Fragment} key={op.code} value={op.code}>
-              {({ active }) => (
-                <li
-                  className={clsx({
-                    'bg-blue-500 text-white p-2': active,
-                    'bg-white text-black p-2': !active,
-                  })}
-                >
-                  {op.label}
-                </li>
-              )}
-            </Combobox.Option>
-          ))
-        )}
-      </Combobox.Options>
-    </Combobox>
-  );
-};
-
-interface DisplayProps {
-  exchangeRate: any;
-  from: CurrencyCode | undefined;
-  to: CurrencyCode | undefined;
-}
-
-const Display = (props: DisplayProps) => {
-  const { exchangeRate, from, to } = props;
-  if (!from || !to || !exchangeRate) return null;
-
-  return (
-    <div className='flex bg-slate-200 gap-4 p-4 flex-col rounded-md shadow-md items-left'>
-      <p className='text-2xl font-sans text-gray-800'>Exchange Rate:</p>
-      <p>
-        1 {currencyList[from]} ({from.toUpperCase()}) equals {exchangeRate[to]}{' '}
-        {currencyList[to]} ({to.toUpperCase()})
-      </p>
+          <div className='col-span-2 grid gap-4 grid-cols-2 grid-flow-row mt-4'>
+            <p className='text-gray-400 col-span-2 text-lg font-semibold'>
+              Shipping Info
+            </p>
+            <input
+              type='text'
+              placeholder='Shipping Address'
+              {...register('address.shippingAddress')}
+              className='col-span-2'
+            />
+            <input
+              type='text'
+              placeholder='Address 2'
+              {...register('address.shippingAddress2')}
+              className='col-span-2'
+            />
+            <select placeholder='Country' {...register('address.country')}>
+              <option hidden>Country</option>
+              <option value='United States'>United States</option>
+            </select>
+            <select placeholder='State' {...register('address.state')}>
+              <option hidden>State</option>
+              <option value='NC'>North Carolina</option>
+            </select>
+            <input
+              type='number'
+              placeholder='Zip'
+              {...register('address.zipcode')}
+            />
+            <div className='flex items-center'>
+              <input
+                type='checkbox'
+                id='sameBilling'
+                value='true'
+                {...register('address.sameBilling')}
+              />
+              <label htmlFor='sameBilling' className='ml-2'>
+                Same Billing
+              </label>
+            </div>
+          </div>
+        </FormPage>
+        <FormPage
+          pageId='ccinfo'
+          currentPage={currentPage}
+          className='bg-white p-8 rounded shadow-md grid grid-cols-2 grid-flow-row gap-y-4'
+        >
+          <div className='col-span-2 grid gap-4 grid-cols-2 grid-flow-row'>
+            <p className='text-gray-400 col-span-2 text-lg font-semibold'>
+              Payment Info
+            </p>
+            <input
+              type='number'
+              placeholder='Card Number'
+              {...register('ccinfo.ccNumber')}
+              className='col-span-2'
+            />
+            <input
+              type='number'
+              placeholder='Exp'
+              {...register('ccinfo.ccExp')}
+            />
+            <input
+              type='number'
+              placeholder='CVV'
+              {...register('ccinfo.cvv')}
+            />
+          </div>
+        </FormPage>
+        <FormPage
+          pageId='upsell'
+          currentPage={currentPage}
+          className='bg-white p-8 rounded shadow-md grid grid-cols-2 grid-flow-row gap-y-4'
+        >
+          <p className='text-gray-800 col-span-2 text-lg font-semibold'>
+            Can we tempt you with a cookie?
+          </p>
+          <p className='text-gray-800 col-span-2'>We promise they are tasty</p>
+          <div className='flex items-center'>
+            <input
+              type='checkbox'
+              id='includeCookie'
+              value='true'
+              {...register('upsell.includeCookie')}
+            />
+            <label htmlFor='includeCookie' className='ml-2'>
+              Include Cookie
+            </label>
+          </div>
+        </FormPage>
+        <FormPage
+          pageId='confirmation'
+          currentPage={currentPage}
+          className='bg-white p-8 rounded shadow-md grid grid-cols-2 grid-flow-row gap-y-4'
+        >
+          <div className='col-span-2 grid gap-4 grid-cols-2 grid-flow-row'>
+            <p className='text-gray-500 col-span-2 text-lg font-semibold'>
+              Contact Info
+            </p>
+            <p className='text-gray-400'>First Name</p>
+            <p>{getValues('address.firstName')}</p>
+            <p className='text-gray-400'>Last Name</p>
+            <p>{getValues('address.lastName')}</p>
+            <p className='text-gray-400'>Address 1</p>
+            <p>{getValues('address.shippingAddress')}</p>
+            <p className='text-gray-400'>Address 2</p>
+            <p>{getValues('address.shippingAddress2')}</p>
+            <p className='text-gray-400'>Country</p>
+            <p>{getValues('address.country')}</p>
+            <p className='text-gray-400'>State</p>
+            <p>{getValues('address.state')}</p>
+            <p className='text-gray-400'>Zip</p>
+            <p>{getValues('address.zipcode')}</p>
+            <p className='text-gray-400'>Same Billing</p>
+            <p>{getValues('address.sameBilling')}</p>
+          </div>
+          <div className='col-span-2 grid gap-4 grid-cols-2 grid-flow-row'>
+            <p className='text-gray-500 col-span-2 text-lg font-semibold'>
+              Payment Info
+            </p>
+            <p className='text-gray-400'>Card Number</p>
+            <p>{getValues('ccinfo.ccNumber')}</p>
+            <p className='text-gray-400'>Expiration</p>
+            <p>{getValues('ccinfo.ccExp')}</p>
+            <p className='text-gray-400'>CVV</p>
+            <p>{getValues('ccinfo.cvv')}</p>
+          </div>
+          <div className='col-span-2 grid gap-4 grid-cols-2 grid-flow-row'>
+            <p className='text-gray-500 col-span-2 text-lg font-semibold'>
+              Upsell Info
+            </p>
+            <p className='text-gray-400'>Cookies</p>
+            <p>{getValues('upsell.includeCookie')}</p>
+          </div>
+        </FormPage>
+        <div className='flex w-full gap-4 justify-end'>
+          {!isFirstPage && (
+            <button
+              onClick={previousPage}
+              className='p-[.5em] rounded uppercase text-xl font-semibold w-1/2 border-b-2'
+            >
+              Back
+            </button>
+          )}
+          {!isLastPage && (
+            <button
+              onClick={nextPage}
+              className='bg-blue-500 text-white p-[.5em] rounded uppercase text-xl font-semibold w-1/2 border-b-2 border-blue-600 shadow-sm'
+            >
+              Next
+            </button>
+          )}
+          {isLastPage && (
+            <button
+              type='submit'
+              className='bg-blue-500 text-white p-[.5em] rounded uppercase text-xl font-semibold w-1/2 border-b-2 border-blue-600 shadow-sm'
+            >
+              Submit
+            </button>
+          )}
+        </div>
+      </form>
     </div>
   );
-};
-
-const RightArrow = () => (
-  <svg
-    xmlns='http://www.w3.org/2000/svg'
-    className='h-6 w-6 text-blue-500'
-    fill='none'
-    viewBox='0 0 24 24'
-    stroke='currentColor'
-    strokeWidth={2}
-  >
-    <path
-      strokeLinecap='round'
-      strokeLinejoin='round'
-      d='M14 5l7 7m0 0l-7 7m7-7H3'
-    />
-  </svg>
-);
-
-const SelectorIcon = ({ className }: { className: string }) => (
-  <svg
-    xmlns='http://www.w3.org/2000/svg'
-    className={className}
-    fill='none'
-    viewBox='0 0 24 24'
-    stroke='currentColor'
-    strokeWidth={2}
-  >
-    <path
-      strokeLinecap='round'
-      strokeLinejoin='round'
-      d='M8 9l4-4 4 4m0 6l-4 4-4-4'
-    />
-  </svg>
-);
+}
