@@ -6,3 +6,4 @@ Some relevant links:
 - [Publish to NPM from Github Release](https://dev.to/astagi/publish-to-npm-using-github-actions-23fn)
 - [Publish React Components in NPM](https://itnext.io/how-to-package-your-react-component-for-distribution-via-npm-d32d4bf71b4f)
 - [Possibly useful useAsync hook](https://usehooks.com/useAsync/)
+- [Collapse using React Spring](https://codesandbox.io/s/github/pmndrs/react-spring/tree/master/demo/src/sandboxes/tree)
