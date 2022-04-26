@@ -14,11 +14,20 @@ export default function App() {
     nextPage,
     previousPage,
     getValues,
+    watch,
   } = useMIP({
     pageIds: ['address', 'ccinfo', 'upsell', 'confirmation'],
     onNext: () => console.log('nexted'),
     onSubmit: () => console.log('submitted'),
+    hookFormConfig: {
+      defaultValues: {
+        address: {
+          sameBilling: true,
+        },
+      },
+    },
   });
+  const sameBilling = watch('address.sameBilling') as boolean;
 
   return (
     <div className='flex justify-center items-center bg-gray-200 h-full py-40'>
@@ -48,9 +57,21 @@ export default function App() {
             <QuestionResolver
               questions={checkout.address}
               register={register}
-              sliceQuestions={{ start: 3 }}
+              sliceQuestions={{ start: 3, end: 9 }}
             />
           </div>
+          {!sameBilling && (
+            <div className='col-span-2 grid gap-4 grid-cols-2 grid-flow-row mt-4'>
+              <p className='text-gray-400 col-span-2 text-lg font-semibold'>
+                Billing Info
+              </p>
+              <QuestionResolver
+                questions={checkout.address}
+                register={register}
+                sliceQuestions={{ start: 9 }}
+              />
+            </div>
+          )}
         </FormPage>
         <FormPage
           pageId='ccinfo'
@@ -78,9 +99,9 @@ export default function App() {
         <FormPage
           pageId='confirmation'
           currentPage={currentPage}
-          className='bg-white p-8 rounded shadow-md grid grid-cols-2 grid-flow-row gap-y-4'
+          className='bg-white p-8 rounded shadow-md flex items-start gap-8'
         >
-          <div className='col-span-2 grid gap-4 grid-cols-2 grid-flow-row'>
+          <div className='grid gap-4 grid-cols-2 grid-flow-row'>
             <p className='text-gray-500 col-span-2 text-lg font-semibold'>
               Contact Info
             </p>
@@ -101,7 +122,7 @@ export default function App() {
             <p className='text-gray-400'>Same Billing</p>
             <p>{getValues('address.sameBilling')}</p>
           </div>
-          <div className='col-span-2 grid gap-4 grid-cols-2 grid-flow-row'>
+          <div className='grid gap-4 grid-cols-2 grid-flow-row'>
             <p className='text-gray-500 col-span-2 text-lg font-semibold'>
               Payment Info
             </p>
