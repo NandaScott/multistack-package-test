@@ -1,5 +1,8 @@
+import clsx from 'clsx';
 import FormPage from './components/form-page';
+import QuestionResolver from './components/question-resolver';
 import { useMIP } from './hooks/useMIP';
+import { checkout } from './questions';
 
 export default function App() {
   const {
@@ -33,63 +36,21 @@ export default function App() {
             <p className='text-gray-400 col-span-2 text-lg font-semibold'>
               Contact Info
             </p>
-            <input
-              type='text'
-              placeholder='First Name'
-              {...register('address.firstName')}
-            />
-            <input
-              type='text'
-              placeholder='Last Name'
-              {...register('address.lastName')}
-            />
-            <input
-              type='text'
-              placeholder='Email'
-              {...register('address.email')}
-              className='col-span-2'
+            <QuestionResolver
+              questions={checkout.address}
+              register={register}
+              sliceQuestions={{ end: 3 }}
             />
           </div>
           <div className='col-span-2 grid gap-4 grid-cols-2 grid-flow-row mt-4'>
             <p className='text-gray-400 col-span-2 text-lg font-semibold'>
               Shipping Info
             </p>
-            <input
-              type='text'
-              placeholder='Shipping Address'
-              {...register('address.shippingAddress')}
-              className='col-span-2'
+            <QuestionResolver
+              questions={checkout.address}
+              register={register}
+              sliceQuestions={{ start: 3 }}
             />
-            <input
-              type='text'
-              placeholder='Address 2'
-              {...register('address.shippingAddress2')}
-              className='col-span-2'
-            />
-            <select placeholder='Country' {...register('address.country')}>
-              <option hidden>Country</option>
-              <option value='United States'>United States</option>
-            </select>
-            <select placeholder='State' {...register('address.state')}>
-              <option hidden>State</option>
-              <option value='NC'>North Carolina</option>
-            </select>
-            <input
-              type='number'
-              placeholder='Zip'
-              {...register('address.zipcode')}
-            />
-            <div className='flex items-center'>
-              <input
-                type='checkbox'
-                id='sameBilling'
-                value='true'
-                {...register('address.sameBilling')}
-              />
-              <label htmlFor='sameBilling' className='ml-2'>
-                Same Billing
-              </label>
-            </div>
           </div>
         </FormPage>
         <FormPage
@@ -101,22 +62,7 @@ export default function App() {
             <p className='text-gray-400 col-span-2 text-lg font-semibold'>
               Payment Info
             </p>
-            <input
-              type='number'
-              placeholder='Card Number'
-              {...register('ccinfo.ccNumber')}
-              className='col-span-2'
-            />
-            <input
-              type='number'
-              placeholder='Exp'
-              {...register('ccinfo.ccExp')}
-            />
-            <input
-              type='number'
-              placeholder='CVV'
-              {...register('ccinfo.cvv')}
-            />
+            <QuestionResolver questions={checkout.ccinfo} register={register} />
           </div>
         </FormPage>
         <FormPage
@@ -128,17 +74,7 @@ export default function App() {
             Can we tempt you with a cookie?
           </p>
           <p className='text-gray-800 col-span-2'>We promise they are tasty</p>
-          <div className='flex items-center'>
-            <input
-              type='checkbox'
-              id='includeCookie'
-              value='true'
-              {...register('upsell.includeCookie')}
-            />
-            <label htmlFor='includeCookie' className='ml-2'>
-              Include Cookie
-            </label>
-          </div>
+          <QuestionResolver questions={checkout.upsell} register={register} />
         </FormPage>
         <FormPage
           pageId='confirmation'
