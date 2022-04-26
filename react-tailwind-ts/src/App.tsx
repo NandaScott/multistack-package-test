@@ -1,4 +1,3 @@
-import clsx from 'clsx';
 import FormPage from './components/form-page';
 import QuestionResolver from './components/question-resolver';
 import { useMIP } from './hooks/useMIP';
