@@ -1,3 +1,4 @@
+import Joi from "joi";
 import React from "react"
 
 type CheckoutPageIds = 'address' | 'ccinfo' | 'upsell';
@@ -161,3 +162,62 @@ export const checkout: Record<CheckoutPageIds, Question[]> = {
     }
   ]
 }
+
+type PageSchema = Record<CheckoutPageIds, Joi.SchemaLike | Joi.SchemaLike[]>
+type QuestionSchema = Record<CheckoutFieldNames, Joi.SchemaLike | Joi.SchemaLike[]>
+
+export const validationSchema = Joi.object<PageSchema>({
+  address: Joi.object<QuestionSchema>({
+    firstName: Joi.string().required(),
+    lastName: Joi.string().required(),
+    email: Joi.string().email({ tlds: false }).required(),
+    shippingAddress: Joi.string().required(),
+    shippingAddress2: Joi.string().required(),
+    country: Joi.string().required(),
+    state: Joi.string().required(),
+    zipcode: Joi.string().required(),
+    sameBilling: Joi.string().equal('true').required(),
+    billingAddress: Joi.string().when('sameBilling', {
+      is: Joi.string().equal('true'),
+      then: Joi.string().required(),
+      otherwise: Joi.optional()
+    }),
+    billingAddress2: Joi.string().when('sameBilling', {
+      is: Joi.string().equal('true'),
+      then: Joi.string().required(),
+      otherwise: Joi.optional()
+    }),
+    billingCountry: Joi.string().when('sameBilling', {
+      is: Joi.string().equal('true'),
+      then: Joi.string().required(),
+      otherwise: Joi.optional()
+    }),
+    billingState: Joi.string().when('sameBilling', {
+      is: Joi.string().equal('true'),
+      then: Joi.string().required(),
+      otherwise: Joi.optional()
+    }),
+    billingZipcode: Joi.string().when('sameBilling', {
+      is: Joi.string().equal('true'),
+      then: Joi.string().required(),
+      otherwise: Joi.optional()
+    }),
+  }).when('$pageId', {
+    is: Joi.string().equal('address'),
+    otherwise: Joi.object().optional()
+  }),
+  ccinfo: Joi.object<QuestionSchema>({
+    ccNumber: Joi.string().length(16).required(),
+    ccExp: Joi.string().length(4).required(),
+    cvv: Joi.string().length(5).required()
+  }).when('$pageId', {
+    is: Joi.string().equal('ccinfo'),
+    otherwise: Joi.object().optional()
+  }),
+  upsell: Joi.object<QuestionSchema>({
+    includeCookie: Joi.string().optional()
+  }).when('$pageId', {
+    is: Joi.string().equal('upsell'),
+    otherwise: Joi.object().optional()
+  })
+})

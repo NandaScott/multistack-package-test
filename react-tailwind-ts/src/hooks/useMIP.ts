@@ -1,5 +1,7 @@
+import { joiResolver } from "@hookform/resolvers/joi";
 import { useCallback, useState, useRef } from "react";
 import { useForm, UseFormProps } from "react-hook-form";
+import { validationSchema } from "../questions";
 
 interface Config {
   pageIds: Array<string | number>
@@ -13,6 +15,18 @@ interface Config {
 export const useMIP = (config: Config) => {
   const { pageIds, pageSkips, hookFormConfig, onNext, onBack, onSubmit } = config;
   const [currentPage, setCurrentPage] = useState<number | string>(pageIds[0]);
+  const { ...rest } = useForm({
+    mode: 'onBlur',
+    reValidateMode: 'onBlur',
+    resolver: joiResolver(validationSchema, {
+      context: { currentPage }, messages: {
+        'string.empty': 'Required.',
+        'string.email': 'Must be a valid email.'
+      }
+    }),
+    shouldUseNativeValidation: false,
+    ...hookFormConfig
+  });
   const pages = useRef<Array<string | number>>(pageIds)
   const pageHistory = useRef<Array<string | number>>([pageIds[0]])
   const isFirstPage = useRef<boolean>(true);
@@ -79,7 +93,7 @@ export const useMIP = (config: Config) => {
   }, [onSubmit])
 
   return {
-    ...useForm(hookFormConfig),
+    ...rest,
     isFirstPage: isFirstPage.current,
     isLastPage: isLastPage.current,
     pages: pages.current,
