@@ -1,10 +1,9 @@
 import { joiResolver } from "@hookform/resolvers/joi";
 import { useCallback, useState, useRef } from "react";
 import { useForm, UseFormProps } from "react-hook-form";
-import { validationSchema } from "../questions";
+import { formMap } from '../questions';
 
 interface Config {
-  pageIds: Array<string | number>
   onNext?: () => void;
   onBack?: () => void;
   onSubmit?: () => void;
@@ -13,9 +12,10 @@ interface Config {
   debugValidation?: boolean,
 }
 
-export const useMIP = (config: Config) => {
-  const { pageIds, pageSkips, hookFormConfig, onNext, onBack, onSubmit, debugValidation } = config;
-  const [currentPage, setCurrentPage] = useState<number | string>(pageIds[0]);
+export const useMIP = (formId: keyof typeof formMap, config?: Config) => {
+  const { pageSkips, hookFormConfig, onNext, onBack, onSubmit, debugValidation } = config ?? {};
+  const form = useRef(formMap[formId]);
+  const [currentPage, setCurrentPage] = useState<number | string>(form.current.pageIds[0]);
   const { formState, ...rest } = useForm({
     mode: 'onBlur',
     resolver: async (data, context, options) => {
@@ -31,15 +31,16 @@ export const useMIP = (config: Config) => {
       }
       if (debugValidation) {
         console.log('formData', data)
-        console.log('validation result', await joiResolver(validationSchema, config)(data, context, options))
+        console.log('validation result', await joiResolver(form.current.validation, config)(data, context, options))
       }
-      return joiResolver(validationSchema, config)(data, context, options)
+      return joiResolver(form.current.validation, config)(data, context, options)
     },
     shouldUseNativeValidation: false,
+    defaultValues: form.current.defaultValues,
     ...hookFormConfig
   });
-  const pages = useRef<Array<string | number>>(pageIds)
-  const pageHistory = useRef<Array<string | number>>([pageIds[0]])
+  const pages = useRef<Array<string | number>>(form.current.pageIds)
+  const pageHistory = useRef<Array<string | number>>([form.current.pageIds[0]])
   const isFirstPage = useRef<boolean>(true);
   const isLastPage = useRef<boolean>(false);
   const currentStep = useRef<number>(0);
@@ -50,16 +51,16 @@ export const useMIP = (config: Config) => {
     if (!isValid) return;
 
     isFirstPage.current = false;
-    const currentPageIndex = pageIds.indexOf(currentPage) + 1;
+    const currentPageIndex = form.current.pageIds.indexOf(currentPage) + 1;
 
-    let nextPageId = pages.current[Math.min(currentPageIndex, pageIds.length - 1)];
+    let nextPageId = pages.current[Math.min(currentPageIndex, form.current.pageIds.length - 1)];
     const skipTo = pageSkips?.()
     if (skipTo !== undefined) {
       nextPageId = skipTo
     }
     pageHistory.current.push(nextPageId)
 
-    const nextPageIndex = pageIds.indexOf(nextPageId);
+    const nextPageIndex = form.current.pageIds.indexOf(nextPageId);
     currentStep.current = nextPageIndex;
     if (nextPageIndex + 1 === pages.current.length) {
       isLastPage.current = true;
@@ -67,7 +68,7 @@ export const useMIP = (config: Config) => {
 
     setCurrentPage(nextPageId);
     onNext?.()
-  }, [currentPage, pageIds, pageSkips, onNext, formState]);
+  }, [currentPage, pageSkips, onNext, formState]);
 
   const previousPage = useCallback(() => {
     isLastPage.current = false

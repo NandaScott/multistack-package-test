@@ -167,7 +167,7 @@ export const checkout: Record<CheckoutPageIds, Question[]> = {
 type PageSchema = Record<CheckoutPageIds, Joi.SchemaLike | Joi.SchemaLike[]>
 type QuestionSchema = Record<CheckoutFieldNames, Joi.SchemaLike | Joi.SchemaLike[]>
 
-export const validationSchema = Joi.object<PageSchema>({
+export const validation = Joi.object<PageSchema>({
   address: Joi.object<QuestionSchema>({
     firstName: Joi.string().required(),
     lastName: Joi.string().required(),

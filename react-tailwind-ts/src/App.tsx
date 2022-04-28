@@ -16,16 +16,7 @@ export default function App() {
     getValues,
     watch,
     formState: { errors },
-  } = useMIP({
-    pageIds: ['address', 'ccinfo', 'upsell', 'confirmation'],
-    hookFormConfig: {
-      defaultValues: {
-        address: {
-          sameBilling: true,
-        },
-      },
-    },
-  });
+  } = useMIP('checkout');
   const sameBilling = watch('address.sameBilling') as boolean;
 
   return (
