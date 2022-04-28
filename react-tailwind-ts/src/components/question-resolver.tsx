@@ -24,13 +24,15 @@ export default function QuestionResolver(props: QuestionResolverProps) {
         .map(({ name, type, displayLabel, span2Cols, options, value }, i) => {
           if (type === 'select') {
             return (
-              <div className='flex flex-col'>
+              <div className='flex flex-col' key={`select-container-${name}`}>
                 <select
                   key={`select-${name}`}
                   placeholder={displayLabel}
                   {...register(`address.${name}`)}
                 >
-                  <option hidden>{displayLabel}</option>
+                  <option key={`${name}-hidden`} hidden>
+                    {displayLabel}
+                  </option>
                   {options?.map(({ value, label }) => (
                     <option key={`${label}.${value}`} value={value}>
                       {label}
@@ -53,14 +55,18 @@ export default function QuestionResolver(props: QuestionResolverProps) {
 
           if (type === 'singleCheckbox') {
             return (
-              <div key={name} className='flex items-center'>
+              <div
+                key={`checkbox-container-${name}`}
+                className='flex items-center'
+              >
                 <input
+                  key={`input-${name}`}
                   type='checkbox'
                   id={name}
                   value={value}
                   {...register(`address.${name}`)}
                 />
-                <label htmlFor={name} className='ml-2'>
+                <label key={`label-${name}`} htmlFor={name} className='ml-2'>
                   {displayLabel}
                 </label>
                 <ErrorMessage
@@ -78,6 +84,7 @@ export default function QuestionResolver(props: QuestionResolverProps) {
 
           return (
             <div
+              key={`input-container-${name}`}
               className={clsx(
                 'flex flex-col',
                 span2Cols ? 'col-span-2' : 'col-span-1'
