@@ -28,7 +28,7 @@ export default function QuestionResolver(props: QuestionResolverProps) {
                 <select
                   key={`select-${name}`}
                   placeholder={displayLabel}
-                  {...register(`address.${name}`)}
+                  {...register(`${pageId}.${name}`)}
                 >
                   <option key={`${name}-hidden`} hidden>
                     {displayLabel}
@@ -64,7 +64,7 @@ export default function QuestionResolver(props: QuestionResolverProps) {
                   type='checkbox'
                   id={name}
                   value={value}
-                  {...register(`address.${name}`)}
+                  {...register(`${pageId}.${name}`)}
                 />
                 <label key={`label-${name}`} htmlFor={name} className='ml-2'>
                   {displayLabel}
@@ -94,7 +94,7 @@ export default function QuestionResolver(props: QuestionResolverProps) {
                 key={`input-${name}`}
                 type={type}
                 placeholder={displayLabel}
-                {...register(`address.${name}`)}
+                {...register(`${pageId}.${name}`)}
               />
               <ErrorMessage
                 key={`error-message-${name}`}

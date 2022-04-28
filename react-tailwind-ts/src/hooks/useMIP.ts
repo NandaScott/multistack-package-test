@@ -9,21 +9,32 @@ interface Config {
   onBack?: () => void;
   onSubmit?: () => void;
   pageSkips?: () => string | number | undefined;
-  hookFormConfig?: UseFormProps
+  hookFormConfig?: UseFormProps,
+  debugValidation?: boolean,
 }
 
 export const useMIP = (config: Config) => {
-  const { pageIds, pageSkips, hookFormConfig, onNext, onBack, onSubmit } = config;
+  const { pageIds, pageSkips, hookFormConfig, onNext, onBack, onSubmit, debugValidation } = config;
   const [currentPage, setCurrentPage] = useState<number | string>(pageIds[0]);
-  const { ...rest } = useForm({
+  const { formState, ...rest } = useForm({
     mode: 'onBlur',
-    reValidateMode: 'onBlur',
-    resolver: joiResolver(validationSchema, {
-      context: { currentPage }, messages: {
-        'string.empty': 'Required.',
-        'string.email': 'Must be a valid email.'
+    resolver: async (data, context, options) => {
+      const config = {
+        context: {
+          currentPage: 'address'
+        },
+        messages: {
+          'string.empty': 'Required.',
+          'string.email': 'Must be a valid email.',
+          'any.invalid': 'Please select an option.',
+        }
       }
-    }),
+      if (debugValidation) {
+        console.log('formData', data)
+        console.log('validation result', await joiResolver(validationSchema, config)(data, context, options))
+      }
+      return joiResolver(validationSchema, config)(data, context, options)
+    },
     shouldUseNativeValidation: false,
     ...hookFormConfig
   });
@@ -34,6 +45,10 @@ export const useMIP = (config: Config) => {
   const currentStep = useRef<number>(0);
 
   const nextPage = useCallback(() => {
+    const { errors, isValid } = formState;
+    console.log({ errors, isValid })
+    if (!isValid) return;
+
     isFirstPage.current = false;
     const currentPageIndex = pageIds.indexOf(currentPage) + 1;
 
@@ -52,7 +67,7 @@ export const useMIP = (config: Config) => {
 
     setCurrentPage(nextPageId);
     onNext?.()
-  }, [currentPage, pageIds, pageSkips, onNext]);
+  }, [currentPage, pageIds, pageSkips, onNext, formState]);
 
   const previousPage = useCallback(() => {
     isLastPage.current = false
@@ -93,6 +108,7 @@ export const useMIP = (config: Config) => {
   }, [onSubmit])
 
   return {
+    formState,
     ...rest,
     isFirstPage: isFirstPage.current,
     isLastPage: isLastPage.current,
