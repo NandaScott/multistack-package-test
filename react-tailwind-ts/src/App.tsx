@@ -2,7 +2,6 @@ import FormPage from './components/form-page';
 import QuestionResolver from './components/question-resolver';
 import { useMIP } from './hooks/useMIP';
 import { checkout } from './questions';
-import { useEffect } from 'react';
 
 export default function App() {
   const {
@@ -16,11 +15,9 @@ export default function App() {
     previousPage,
     getValues,
     watch,
-    formState: { errors, isValid },
+    formState: { errors },
   } = useMIP({
     pageIds: ['address', 'ccinfo', 'upsell', 'confirmation'],
-    onNext: () => console.log('nexted'),
-    onSubmit: () => console.log('submitted'),
     hookFormConfig: {
       defaultValues: {
         address: {
@@ -30,10 +27,6 @@ export default function App() {
     },
   });
   const sameBilling = watch('address.sameBilling') as boolean;
-
-  useEffect(() => {
-    console.log({ errors, isValid });
-  }, [errors, isValid]);
 
   return (
     <div className='flex justify-center items-center bg-gray-200 h-full py-40'>

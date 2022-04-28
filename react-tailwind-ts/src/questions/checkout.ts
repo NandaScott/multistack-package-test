@@ -172,42 +172,42 @@ export const validationSchema = Joi.object<PageSchema>({
     lastName: Joi.string().required(),
     email: Joi.string().email({ tlds: false }).required(),
     shippingAddress: Joi.string().required(),
-    shippingAddress2: Joi.string().required(),
-    country: Joi.string().required(),
-    state: Joi.string().required(),
+    shippingAddress2: Joi.optional(),
+    country: Joi.string().not('Country'),
+    state: Joi.string().not('State'),
     zipcode: Joi.string().required(),
-    sameBilling: Joi.string().equal('true').required(),
+    sameBilling: Joi.optional(),
     billingAddress: Joi.string().when('sameBilling', {
-      is: Joi.string().equal('true'),
-      then: Joi.string().required(),
-      otherwise: Joi.optional()
+      is: Joi.boolean().equal(true),
+      then: Joi.optional(),
+      otherwise: Joi.string().required(),
     }),
     billingAddress2: Joi.string().when('sameBilling', {
-      is: Joi.string().equal('true'),
-      then: Joi.string().required(),
-      otherwise: Joi.optional()
+      is: Joi.boolean().equal(true),
+      then: Joi.optional(),
+      otherwise: Joi.string().required(),
     }),
     billingCountry: Joi.string().when('sameBilling', {
-      is: Joi.string().equal('true'),
-      then: Joi.string().required(),
-      otherwise: Joi.optional()
+      is: Joi.boolean().equal(true),
+      then: Joi.optional(),
+      otherwise: Joi.string().required(),
     }),
     billingState: Joi.string().when('sameBilling', {
-      is: Joi.string().equal('true'),
-      then: Joi.string().required(),
-      otherwise: Joi.optional()
+      is: Joi.boolean().equal(true),
+      then: Joi.optional(),
+      otherwise: Joi.string().required(),
     }),
     billingZipcode: Joi.string().when('sameBilling', {
-      is: Joi.string().equal('true'),
-      then: Joi.string().required(),
-      otherwise: Joi.optional()
+      is: Joi.boolean().equal(true),
+      then: Joi.optional(),
+      otherwise: Joi.string().required(),
     }),
   }).when('$pageId', {
     is: Joi.string().equal('address'),
     otherwise: Joi.object().optional()
   }),
   ccinfo: Joi.object<QuestionSchema>({
-    ccNumber: Joi.string().length(16).required(),
+    ccNumber: Joi.string().length(16).message('Length must be exactly 16.').required(),
     ccExp: Joi.string().length(4).required(),
     cvv: Joi.string().length(5).required()
   }).when('$pageId', {
