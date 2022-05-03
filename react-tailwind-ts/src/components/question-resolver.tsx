@@ -1,5 +1,5 @@
 import { FieldValues, UseFormRegister } from 'react-hook-form';
-import { Question } from '../questions/checkout';
+import { Question } from 'nds-common';
 import clsx from 'clsx';
 import { ErrorMessage } from '@hookform/error-message';
 

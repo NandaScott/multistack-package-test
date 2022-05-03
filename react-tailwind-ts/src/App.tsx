@@ -1,7 +1,6 @@
-import FormPage from './components/form-page';
 import QuestionResolver from './components/question-resolver';
-import { useMIP } from './hooks/useMIP';
-import { checkout } from './questions';
+import { useMIP, checkout } from 'nds-common/build';
+import { FormPage } from 'nds-common/build/components';
 
 export default function App() {
   const {
