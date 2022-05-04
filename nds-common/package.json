@@ -1,6 +1,6 @@
 {
   "name": "nds-common",
-  "version": "0.5.2",
+  "version": "0.5.3",
   "description": "Testing to see how a multistack package works",
   "main": "./build/index.js",
   "types": "./build/index.d.js",
@@ -11,8 +11,27 @@
     ".": "./build/index.js",
     "./components": "./build/components",
     "./hooks": "./build/hooks",
-    "./questions": "./build/hooks",
+    "./questions": "./build/questions",
     "./services": "./build/services"
+  },
+  "typesVersions": {
+    "*": {
+      ".": [
+        "."
+      ],
+      "components": [
+        "./build/components"
+      ],
+      "hooks": [
+        "./build/hooks"
+      ],
+      "question": [
+        "./build/question"
+      ],
+      "services": [
+        "./build/services"
+      ]
+    }
   },
   "scripts": {
     "clean": "rm -rf ./build/*",
