@@ -46,9 +46,8 @@ export const useMIP = (formId: keyof typeof formMap, config?: Config) => {
   const currentStep = useRef<number>(0);
 
   const nextPage = useCallback(() => {
-    const { errors, isValid } = formState;
-    console.log({ errors, isValid })
-    if (!isValid) return;
+    const { errors } = formState;
+    if (Object.keys(errors).length !== 0) return;
 
     isFirstPage.current = false;
     const currentPageIndex = form.current.pageIds.indexOf(currentPage) + 1;

@@ -28,8 +28,8 @@ export interface Question {
   type: React.HTMLInputTypeAttribute | 'singleCheckbox' | 'select';
   displayLabel?: string;
   options?: { label: string, value: string }[];
-  value?: string;
-  span2Cols?: boolean
+  value?: string | boolean;
+  span2Cols?: boolean;
 }
 
 
@@ -94,7 +94,7 @@ export const checkout: Record<CheckoutPageIds, Question[]> = {
       name: 'sameBilling',
       type: 'singleCheckbox',
       displayLabel: 'Same Billing',
-      value: 'true'
+      value: true
     },
     {
       name: 'billingAddress',
@@ -173,46 +173,38 @@ export const validation = Joi.object<PageSchema>({
     lastName: Joi.string().required(),
     email: Joi.string().email({ tlds: false }).required(),
     shippingAddress: Joi.string().required(),
-    shippingAddress2: Joi.optional(),
+    shippingAddress2: Joi.string().allow('').optional(),
     country: Joi.string().not('Country'),
     state: Joi.string().not('State'),
     zipcode: Joi.string().required(),
-    sameBilling: Joi.optional(),
-    billingAddress: Joi.string().when('sameBilling', {
-      is: Joi.boolean().equal(true),
-      then: Joi.optional(),
-      otherwise: Joi.string().required(),
+    sameBilling: Joi.boolean(),
+    billingAddress: Joi.when('sameBilling', {
+      is: false,
+      then: Joi.string().required(),
     }),
-    billingAddress2: Joi.string().when('sameBilling', {
-      is: Joi.boolean().equal(true),
-      then: Joi.optional(),
-      otherwise: Joi.string().required(),
+    billingAddress2: Joi.when('sameBilling', {
+      is: false,
+      then: Joi.string().allow('').optional(),
     }),
-    billingCountry: Joi.string().when('sameBilling', {
-      is: Joi.boolean().equal(true),
-      then: Joi.optional(),
-      otherwise: Joi.string().required(),
+    billingCountry: Joi.when('sameBilling', {
+      is: false,
+      then: Joi.string().required(),
     }),
-    billingState: Joi.string().when('sameBilling', {
-      is: Joi.boolean().equal(true),
-      then: Joi.optional(),
-      otherwise: Joi.string().required(),
+    billingState: Joi.when('sameBilling', {
+      is: false,
+      then: Joi.string().required(),
     }),
-    billingZipcode: Joi.string().when('sameBilling', {
-      is: Joi.boolean().equal(true),
-      then: Joi.optional(),
-      otherwise: Joi.string().required(),
+    billingZipcode: Joi.when('sameBilling', {
+      is: false,
+      then: Joi.string().required(),
     }),
-  }).when('$pageId', {
-    is: Joi.string().equal('address'),
-    otherwise: Joi.object().optional()
   }),
   ccinfo: Joi.object<QuestionSchema>({
     ccNumber: Joi.string().length(16).message('Length must be exactly 16.').required(),
     ccExp: Joi.string().length(4).required(),
     cvv: Joi.string()
-      .min(4).message('Length must be at least 4.')
-      .max(5).message('Must be shorter than 5')
+      .min(3).message('Length must be at least 4.')
+      .max(4).message('Must be shorter than 5')
       .required()
   }).when('$pageId', {
     is: Joi.string().equal('ccinfo'),
