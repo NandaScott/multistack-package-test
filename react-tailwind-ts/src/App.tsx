@@ -15,7 +15,12 @@ export default function App() {
     getValues,
     watch,
     formState: { errors },
-  } = useMIP('checkout');
+  } = useMIP('checkout', {
+    debugValidation: true,
+    hookFormConfig: {
+      reValidateMode: 'onBlur',
+    },
+  });
   const sameBilling = watch('address.sameBilling') as boolean;
 
   return (
@@ -150,6 +155,7 @@ export default function App() {
           {!isFirstPage && (
             <button
               onClick={previousPage}
+              type='button'
               className='p-[.5em] rounded uppercase text-xl font-semibold w-1/2 border-b-2'
             >
               Back
@@ -158,6 +164,7 @@ export default function App() {
           {!isLastPage && (
             <button
               onClick={nextPage}
+              type='button'
               className='bg-blue-500 text-white p-[.5em] rounded uppercase text-xl font-semibold w-1/2 border-b-2 border-blue-600 shadow-sm'
             >
               Next

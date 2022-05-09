@@ -63,7 +63,7 @@ export default function QuestionResolver(props: QuestionResolverProps) {
                   key={`input-${name}`}
                   type='checkbox'
                   id={name}
-                  value={value}
+                  value={value?.toString()}
                   {...register(`${pageId}.${name}`)}
                 />
                 <label key={`label-${name}`} htmlFor={name} className='ml-2'>
