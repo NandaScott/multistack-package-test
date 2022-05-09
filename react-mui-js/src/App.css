@@ -1,43 +1,88 @@
 .main-container {
+  /* flex justify-center items-center bg-gray-200 h-full py-40 */
   display: flex;
-  align-content: center;
   justify-content: center;
-  flex-direction: column;
-  background-color: lightslategray;
+  align-items: center;
   height: 100%;
-  gap: 2rem;
+  background-color: rgb(229 231 235);
 }
 
-.paper {
-  width: 50rem;
-  padding: 1rem;
-  margin-left: auto;
-  margin-right: auto;
-}
-
-.controls {
+form {
+  /* flex gap-4 flex-col items-end */
   display: flex;
-  justify-content: space-between;
+  flex-direction: column;
+  align-items: flex-end;
+  gap: 1rem;
 }
 
-.arrow-icon {
-  margin-top: auto;
-  margin-bottom: auto;
+.form-page {
+  /* bg-white p-8 rounded shadow-md grid grid-cols-2 grid-flow-row gap-y-4 */
+  background-color: white;
+  padding: 2rem;
+  border-radius: 0.25rem;
+  --tw-shadow: 0 4px 6px -1px rgb(0 0 0 / 0.1), 0 2px 4px -2px rgb(0 0 0 / 0.1);
+  --tw-shadow-colored: 0 4px 6px -1px var(--tw-shadow-color),
+    0 2px 4px -2px var(--tw-shadow-color);
+  box-shadow: var(--tw-ring-offset-shadow, 0 0 #0000),
+    var(--tw-ring-shadow, 0 0 #0000), var(--tw-shadow);
+  display: grid;
+  grid-template-columns: repeat(2, minmax(0, 1fr));
+  grid-auto-flow: row;
+  row-gap: 1rem;
 }
 
-.autocomplete {
-  width: 20rem;
+.form-page__container {
+  /* col-span-2 grid gap-4 grid-cols-2 grid-flow-row */
+  grid-column: span 2 / span 2;
+  display: grid;
+  gap: 1rem;
+  grid-template-columns: repeat(2, minmax(0, 1fr));
+  grid-auto-flow: row;
 }
 
-.results-container {
+.button-controller {
+  /* flex w-full gap-4 justify-end */
   display: flex;
-  justify-content: center;
+  width: 100%;
+  gap: 1rem;
+  justify-content: flex-end;
+}
+
+.confirmation-page__container {
+  /* grid gap-4 grid-cols-2 grid-flow-row */
+  display: grid;
   gap: 0.5rem;
-  margin-top: 2rem;
+  grid-template-columns: repeat(2, minmax(0, 1fr));
+  grid-auto-flow: row;
+  align-content: center;
 }
 
-.title {
-  margin-left: auto !important;
-  margin-right: auto !important;
-  color: white !important;
+.confirmation-page__text-label {
+  color: rgb(156 163 175);
+}
+
+/*
+Look man, sometimes Tailwind has it right.
+*/
+.mt-4 {
+  margin-top: 1rem;
+}
+.col-span-1 {
+  grid-column: span 1 / span 1;
+}
+
+.col-span-2 {
+  grid-column: span 2 / span 2;
+}
+
+.grid-cols-3 {
+  grid-template-columns: repeat(3, minmax(0, 1fr));
+}
+
+.items-start {
+  align-items: start;
+}
+
+.gap-x-4 {
+  column-gap: 1rem;
 }
