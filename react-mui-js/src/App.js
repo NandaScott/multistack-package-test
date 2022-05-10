@@ -196,7 +196,7 @@ export default function App() {
               variant='contained'
               color='primary'
               size='large'
-              onClick={nextPage}
+              onClick={() => {nextPage(checkout[currentPage].map(question => `${currentPage}.${question.name}`))}}
             >
               Next
             </Button>
