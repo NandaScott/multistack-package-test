@@ -44,7 +44,6 @@ export const useMIP = (formId: keyof typeof formMap, config?: Config) => {
   const isFirstPage = useRef<boolean>(true);
   const isLastPage = useRef<boolean>(false);
   const currentStep = useRef<number>(0);
-  console.log(watch('address.country'))
   const nextPage = useCallback(async () => {
     await trigger(); // first trigger clears any errors that weren't caught by onBlur
     const result = await trigger();
