@@ -130,7 +130,7 @@ export default function App() {
             <p className='text-gray-400'>Zip</p>
             <p>{getValues('address.zipcode')}</p>
             <p className='text-gray-400'>Same Billing</p>
-            <p>{getValues('address.sameBilling')}</p>
+            <p>{getValues('address.sameBilling').toString()}</p>
           </div>
           <div className='grid gap-4 grid-cols-2 grid-flow-row'>
             <p className='text-gray-500 col-span-2 text-lg font-semibold'>
@@ -148,7 +148,7 @@ export default function App() {
               Upsell Info
             </p>
             <p className='text-gray-400'>Cookies</p>
-            <p>{getValues('upsell.includeCookie')}</p>
+            <p>{getValues('upsell.includeCookie').toString()}</p>
           </div>
         </FormPage>
         <div className='flex w-full gap-4 justify-end'>
