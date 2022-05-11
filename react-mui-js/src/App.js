@@ -150,7 +150,7 @@ export default function App() {
               Same Billing
             </Typography>
             <Typography paragraph>
-              {getValues('address.sameBilling').toString()}
+              {JSON.stringify(getValues('address.sameBilling'))}
             </Typography>
           </div>
           <div className='confirmation-page__container'>
@@ -178,7 +178,7 @@ export default function App() {
               Cookies
             </Typography>
             <Typography paragraph>
-              {getValues('upsell.includeCookie').toString()}
+              {JSON.stringify(getValues('upsell.includeCookie'))}
             </Typography>
           </div>
         </FormPage>
