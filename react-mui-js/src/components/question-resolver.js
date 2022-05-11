@@ -36,6 +36,7 @@ export default function QuestionResolver(props) {
                       {label}
                     </MenuItem>
                   ))}
+                </Select>
                   <ErrorMessage
                     key={`error-message-${name}`}
                     errors={errors}
@@ -46,7 +47,6 @@ export default function QuestionResolver(props) {
                       </FormHelperText>
                     )}
                   />
-                </Select>
               </FormControl>
             );
           }
@@ -59,7 +59,6 @@ export default function QuestionResolver(props) {
               >
                 <FormControlLabel
                   key={`FormControlLabel-${name}`}
-                  // value={value}
                   control={
                     <Checkbox
                       key={`Checkbox-${name}`}

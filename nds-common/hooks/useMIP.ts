@@ -16,7 +16,7 @@ export const useMIP = (formId: keyof typeof formMap, config?: Config) => {
   const { pageSkips, hookFormConfig, onNext, onBack, onSubmit, debugValidation } = config ?? {};
   const form = useRef(formMap[formId]);
   const [currentPage, setCurrentPage] = useState<number | string>(form.current.pageIds[0]);
-  const { formState, trigger, ...rest } = useForm({
+  const { formState, trigger, watch, ...rest } = useForm({
     mode: 'onBlur',
     resolver: async (data, context, options) => {
       const config = {
@@ -44,13 +44,12 @@ export const useMIP = (formId: keyof typeof formMap, config?: Config) => {
   const isFirstPage = useRef<boolean>(true);
   const isLastPage = useRef<boolean>(false);
   const currentStep = useRef<number>(0);
-
-  const nextPage = useCallback(async (pageQuestionNames?: string[]) => {
-    if (pageQuestionNames) {
-      const result = await trigger(pageQuestionNames)
-      if (!result) {
-        return false;
-      }
+  console.log(watch('address.country'))
+  const nextPage = useCallback(async () => {
+    await trigger(); // first trigger clears any errors that weren't caught by onBlur
+    const result = await trigger();
+    if (!result) {
+      return false;
     }
     const { errors } = formState;
     if (Object.keys(errors).length !== 0) return;
@@ -124,6 +123,7 @@ export const useMIP = (formId: keyof typeof formMap, config?: Config) => {
     currentPage,
     nextPage,
     previousPage,
-    submitForm
+    submitForm,
+    watch,
   }
 }
