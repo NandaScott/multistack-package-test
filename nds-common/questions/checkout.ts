@@ -174,8 +174,8 @@ export const validation = Joi.object<PageSchema>({
     email: Joi.string().email({ tlds: false }).required(),
     shippingAddress: Joi.string().required(),
     shippingAddress2: Joi.string().allow('').optional(),
-    country: Joi.string().not('Country'),
-    state: Joi.string().not('State'),
+    country: Joi.string().not('Country').required(),
+    state: Joi.string().not('State').required(),
     zipcode: Joi.string().required(),
     sameBilling: Joi.boolean(),
     billingAddress: Joi.when('sameBilling', {
@@ -188,7 +188,7 @@ export const validation = Joi.object<PageSchema>({
     }),
     billingCountry: Joi.when('sameBilling', {
       is: false,
-      then: Joi.string().required(),
+      then: Joi.string().not('Country').required(),
     }),
     billingState: Joi.when('sameBilling', {
       is: false,
@@ -206,13 +206,13 @@ export const validation = Joi.object<PageSchema>({
       .min(3).message('Length must be at least 4.')
       .max(4).message('Must be shorter than 5')
       .required()
-  }).when('$pageId', {
+  }).when('$currentPage', {
     is: Joi.string().equal('ccinfo'),
     otherwise: Joi.object().optional()
   }),
   upsell: Joi.object<QuestionSchema>({
-    includeCookie: Joi.string().optional()
-  }).when('$pageId', {
+    includeCookie: Joi.boolean().optional()
+  }).when('$currentPage', {
     is: Joi.string().equal('upsell'),
     otherwise: Joi.object().optional()
   })

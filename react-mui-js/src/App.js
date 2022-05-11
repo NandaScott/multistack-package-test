@@ -64,6 +64,7 @@ export default function App() {
                 sliceQuestions={{ start: 9 }}
                 errors={errors}
                 pageId='address'
+                watch={watch}
               />
             </div>
           )}
@@ -101,6 +102,7 @@ export default function App() {
             questions={checkout.upsell}
             register={register}
             pageId='upsell'
+            watch={watch}
           />
         </FormPage>
         <FormPage
@@ -148,7 +150,7 @@ export default function App() {
               Same Billing
             </Typography>
             <Typography paragraph>
-              {getValues('address.sameBilling')}
+              {getValues('address.sameBilling').toString()}
             </Typography>
           </div>
           <div className='confirmation-page__container'>
@@ -176,7 +178,7 @@ export default function App() {
               Cookies
             </Typography>
             <Typography paragraph>
-              {getValues('upsell.includeCookie')}
+              {getValues('upsell.includeCookie').toString()}
             </Typography>
           </div>
         </FormPage>
