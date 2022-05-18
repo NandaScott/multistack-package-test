@@ -10,9 +10,12 @@ A little test or example about how to create an npm package that can share reusa
 
 ## Installation
 
-This project uses Docker with docker-compose to build and run all of its parts. After cloning, simply run:
+This project uses Docker with docker-compose to build and run all of its parts. After cloning, simply run the following commands:
 
 ```bash
+  cd ./react-mui-js && npm i
+  cd ./react-tailwind && npm i
+  cd ./nds-common && npm i
   docker-compose up -d
 ```
 
