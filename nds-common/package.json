@@ -34,18 +34,21 @@
     }
   },
   "scripts": {
+    "prepare": "npm run build",
     "clean": "rm -rf ./build/*",
-    "build": "npm run clean && tsc",
+    "build": "npm run clean && tsc -p tsconfig.build.json",
     "pub:major": "npm version major && npm run build && npm publish",
     "pub:minor": "npm version minor && npm run build && npm publish",
     "pub:patch": "npm version patch && npm run build && npm publish",
-    "test": "echo \"Error: no test specified\" && exit 1"
+    "test": "echo \"Error: no test specified\" && exit 1",
+    "format": "npx prettier --config ./prettierrc.json -w ./src"
   },
   "author": "Nanda Scott",
   "license": "ISC",
   "peerDependencies": {
-    "react": "^18.1.0",
-    "react-dom": "^18.1.0"
+    "react": "~18.1.0",
+    "react-dom": "~18.1.0",
+    "axios": "~0.26"
   },
   "devDependencies": {
     "@types/react": "^18.0.8",
@@ -53,7 +56,6 @@
   },
   "dependencies": {
     "@hookform/resolvers": "^2.8.8",
-    "axios": "^0.26.1",
     "currency-codes": "^2.1.0",
     "joi": "^17.6.0",
     "react-hook-form": "^7.30.0"
